@@ -1,17 +1,21 @@
 import { transporter } from './transporter';
 import { env } from '../config/env';
-
-// NOTE: Stage 2 placeholder — plain-text bodies only, just enough for the
-// registration/payment/DDC flows to be functionally complete end-to-end.
-// Full HTML templates with the common footer (logo, support info,
-// disclaimer per REQUIREMENTS.md §7.1) are built in Stage 3.
+import { renderOtpEmail } from './templates/otpEmail';
+import { renderRegistrationConfirmationEmail } from './templates/registrationConfirmationEmail';
+import { renderPaymentConfirmationEmail, PaymentConfirmationEmailParams } from './templates/paymentConfirmationEmail';
+import {
+  renderDueDateChangeConfirmationEmail,
+  DueDateChangeConfirmationEmailParams,
+} from './templates/dueDateChangeConfirmationEmail';
 
 export async function sendOtpEmail(to: string, otp: string, expiryMinutes: number) {
+  const { html, text } = renderOtpEmail(otp, expiryMinutes);
   return transporter.sendMail({
     from: env.EMAIL_FROM,
     to,
     subject: 'Your verification code',
-    text: `Your verification code is ${otp}. It expires in ${expiryMinutes} minutes.`,
+    text,
+    html,
   });
 }
 
@@ -20,51 +24,42 @@ export async function sendRegistrationConfirmationEmail(
   customerName: string,
   accountNumber: string
 ) {
+  const { html, text } = renderRegistrationConfirmationEmail(customerName, accountNumber);
   return transporter.sendMail({
     from: env.EMAIL_FROM,
     to,
-    subject: 'Welcome — Your account is registered',
-    text: `Hi ${customerName}, your account ${accountNumber} has been successfully registered.`,
+    subject: 'Welcome \u2014 Your account is registered',
+    text,
+    html,
   });
 }
 
-export async function sendPaymentConfirmationEmail(params: {
-  to: string;
-  customerName: string;
-  accountNumber: string;
-  amount: number;
-  paymentDate: Date;
-  bankLast4: string;
-  balanceRemaining: number;
-}) {
+export async function sendPaymentConfirmationEmail(
+  params: PaymentConfirmationEmailParams & { to: string }
+) {
+  const { to, ...templateParams } = params;
+  const { html, text } = renderPaymentConfirmationEmail(templateParams);
   const last4 = params.accountNumber.slice(-4);
   return transporter.sendMail({
     from: env.EMAIL_FROM,
-    to: params.to,
-    subject: `Payment Received — Account ${last4}`,
-    text:
-      `Hi ${params.customerName}, we received your payment of $${params.amount.toFixed(2)} ` +
-      `on ${params.paymentDate.toDateString()} (bank account ending ${params.bankLast4}). ` +
-      `Remaining balance: $${params.balanceRemaining.toFixed(2)}.`,
+    to,
+    subject: `Payment Received \u2014 Account ${last4}`,
+    text,
+    html,
   });
 }
 
-export async function sendDueDateChangeConfirmationEmail(params: {
-  to: string;
-  customerName: string;
-  accountNumber: string;
-  previousDueDate: Date;
-  newDueDate: Date;
-  changesRemaining: number;
-}) {
+export async function sendDueDateChangeConfirmationEmail(
+  params: DueDateChangeConfirmationEmailParams & { to: string }
+) {
+  const { to, ...templateParams } = params;
+  const { html, text } = renderDueDateChangeConfirmationEmail(templateParams);
   const last4 = params.accountNumber.slice(-4);
   return transporter.sendMail({
     from: env.EMAIL_FROM,
-    to: params.to,
-    subject: `Due Date Updated — Account ${last4}`,
-    text:
-      `Hi ${params.customerName}, your due date has been updated from ` +
-      `${params.previousDueDate.toDateString()} to ${params.newDueDate.toDateString()}. ` +
-      `You have ${params.changesRemaining} due date change(s) remaining.`,
+    to,
+    subject: `Due Date Updated \u2014 Account ${last4}`,
+    text,
+    html,
   });
 }
