@@ -44,7 +44,9 @@
 
 body {
   margin: 0;
-  background: var(--bg);
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(59,130,246,0.12), transparent 32%),
+              linear-gradient(180deg, #F7F9FC 0%, #F3F4F6 100%);
   color: var(--text-primary);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
                Helvetica, Arial, sans-serif;
@@ -73,31 +75,31 @@ input, select, textarea { font-family: inherit; }
 }
 
 .card {
-  background: var(--surface);
-  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.96);
+  border: 1px solid rgba(226,230,236,0.85);
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-sm);
-  padding: 32px;
+  box-shadow: var(--shadow-md);
+  padding: 34px;
   width: 100%;
-  max-width: 480px;
+  max-width: 520px;
 }
 
 .card-wide {
-  max-width: 720px;
+  max-width: 760px;
 }
 
 /* ============================================================
    Typography
    ============================================================ */
 .page-title {
-  font-size: 22px;
+  font-size: 26px;
   font-weight: 700;
   color: var(--text-primary);
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .page-subtitle {
-  font-size: 14px;
+  font-size: 15px;
   color: var(--text-muted);
   margin-bottom: 28px;
 }
@@ -171,13 +173,18 @@ input, select, textarea { font-family: inherit; }
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 10px 20px;
+  padding: 12px 22px;
   border-radius: var(--radius-sm);
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 700;
   border: none;
-  transition: background 0.15s, opacity 0.15s;
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s, opacity 0.15s;
   width: 100%;
+}
+
+.btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(29,78,216,0.12);
 }
 
 .btn-primary {
@@ -190,18 +197,20 @@ input, select, textarea { font-family: inherit; }
 }
 
 .btn-primary:disabled {
-  opacity: 0.5;
+  opacity: 0.55;
   cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .btn-secondary {
-  background: var(--surface);
+  background: #fff;
   color: var(--accent);
-  border: 1px solid var(--border);
+  border: 1px solid rgba(29,78,216,0.17);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background: var(--accent-light);
+  background: rgba(59,130,246,0.08);
 }
 
 .btn-sm {
@@ -214,10 +223,11 @@ input, select, textarea { font-family: inherit; }
    Alerts / inline messages
    ============================================================ */
 .alert {
-  padding: 12px 14px;
+  padding: 14px 16px;
   border-radius: var(--radius-sm);
   font-size: 14px;
   margin-bottom: 20px;
+  box-shadow: inset 0 1px 2px rgba(15,23,42,0.04);
 }
 
 .alert-error {
@@ -330,43 +340,44 @@ input, select, textarea { font-family: inherit; }
    Dashboard specifics
    ============================================================ */
 .dashboard-header {
-  background: var(--surface);
-  border-bottom: 1px solid var(--border);
-  padding: 16px 24px;
+  background: rgba(255,255,255,0.96);
+  border-bottom: 1px solid rgba(226,232,240,0.72);
+  padding: 18px 28px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   position: sticky;
   top: 0;
   z-index: 10;
+  backdrop-filter: blur(12px);
 }
 
 .dashboard-header .brand {
-  font-size: 15px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 800;
   color: var(--text-primary);
 }
 
 .dashboard-body {
-  max-width: 720px;
+  max-width: 900px;
   margin: 0 auto;
-  padding: 32px 16px 64px;
+  padding: 30px 18px 64px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
 }
 
 /* Amount Due block — the signature element.
    Delinquent state flips to amber warning treatment. */
 .amount-due-block {
-  padding: 24px;
+  padding: 26px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  background: var(--surface);
+  border: 1px solid rgba(226,232,240,0.8);
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
 }
 
 .amount-due-block.delinquent {
-  background: var(--warning-bg);
+  background: linear-gradient(180deg, #FEF3C7 0%, #FEF2F2 100%);
   border-color: var(--warning-border);
 }
 
@@ -483,10 +494,11 @@ input, select, textarea { font-family: inherit; }
 /* Portal brand strip at top of auth pages */
 .portal-brand {
   font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 800;
+  letter-spacing: 0.22em;
   color: var(--accent);
   text-transform: uppercase;
   margin-bottom: 24px;
   text-align: center;
+  letter-spacing: 0.18em;
 }

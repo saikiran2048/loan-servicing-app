@@ -6,6 +6,7 @@ import registrationRouter from './routes/registration';
 import authRouter from './routes/auth';
 import dashboardRouter from './routes/dashboard';
 import paymentRouter from './routes/payment';
+import paymentsRouter from './routes/payments';
 import dueDateChangeRouter from './routes/dueDateChange';
 
 const app = express();
@@ -23,6 +24,7 @@ app.use('/api/registration', registrationRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/dashboard', dashboardRouter);
 app.use('/api/payment', paymentRouter);
+app.use('/api/payments', paymentsRouter);
 app.use('/api/due-date-change', dueDateChangeRouter);
 
 // Centralized error handler — catches anything thrown/rejected in route

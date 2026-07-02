@@ -5,29 +5,42 @@ import { sendPaymentConfirmationEmail } from '../email/sendEmail';
 
 const router = Router();
 
+type UserInitiatedMethod = 'ach_transfer' | 'debit_card' | 'manual';
+
 interface PaymentBody {
   amount?: number;
   bankAccountNumber?: string;
   bankLast4?: string;
+  method?: UserInitiatedMethod;
 }
 
 const BANK_ACCOUNT_REGEX = /^\d{4,17}$/;
 const BANK_LAST4_REGEX = /^\d{4}$/;
 
+// 'autopay' is intentionally excluded here — that method is only ever
+// written by services/autopayService.ts (system-triggered), never by a
+// user-submitted POST /payment request.
+const VALID_USER_METHODS: UserInitiatedMethod[] = ['ach_transfer', 'debit_card', 'manual'];
+
 /**
  * POST /api/payment
- * Per REQUIREMENTS.md §5:
+ * Per REQUIREMENTS.md §5, plus Stage 4 addition of a `method` field:
  * - amount must be > 0
+ * - method must be one of ach_transfer / debit_card / manual
  * - overpayment capped at remaining balance (adjusted down, not rejected)
  * - due date is unaffected by payment
  * - triggers Payment Confirmation email
  */
 router.post('/', requireLogin, async (req: Request<{}, {}, PaymentBody>, res: Response) => {
   const { accountId } = req.auth!;
-  const { amount, bankAccountNumber, bankLast4 } = req.body;
+  const { amount, bankAccountNumber, bankLast4, method } = req.body;
 
   if (amount === undefined || amount === null || Number(amount) <= 0) {
     return res.status(400).json({ error: 'Payment amount must be greater than 0.' });
+  }
+
+  if (!method || !VALID_USER_METHODS.includes(method)) {
+    return res.status(400).json({ error: 'Please select a valid payment method.' });
   }
 
   if (!bankAccountNumber || !BANK_ACCOUNT_REGEX.test(bankAccountNumber)) {
@@ -76,9 +89,9 @@ router.post('/', requireLogin, async (req: Request<{}, {}, PaymentBody>, res: Re
     }
 
     await client.query(
-      `INSERT INTO payments (account_id, amount, bank_account_number, bank_last_4)
-       VALUES ($1, $2, $3, $4)`,
-      [accountId, appliedAmount, bankAccountNumber, bankLast4]
+      `INSERT INTO payments (account_id, amount, bank_account_number, bank_last_4, method)
+       VALUES ($1, $2, $3, $4, $5)`,
+      [accountId, appliedAmount, bankAccountNumber, bankLast4, method]
     );
 
     // installments_paid (REQUIREMENTS.md §4.2 progress bar) increments by
@@ -111,6 +124,7 @@ router.post('/', requireLogin, async (req: Request<{}, {}, PaymentBody>, res: Re
           accountNumber: account.account_number,
           amount: appliedAmount,
           paymentDate: new Date(),
+          method,
           bankLast4,
           balanceRemaining: newRemainingBalance,
         });
