@@ -30,6 +30,12 @@ npm run dev:backend     # starts Express API
 npm run dev:frontend    # starts Vite dev server
 ```
 
+## Deployment notes
+
+- Backend deploys from `backend/` on Render.
+- Render environment variables should include `DATABASE_URL`, `JWT_SECRET`, and the Mailtrap values below.
+- The backend accepts both `MAILTRAP_*` and legacy `SMTP_*` names for Render compatibility.
+
 ## Status
 
 🚧 Stage 0 — repo scaffolding. See staged implementation plan for what's next.
