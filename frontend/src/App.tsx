@@ -9,13 +9,17 @@ function RequireAuth({ children }: { children: ReactNode }) {
   return tokenStore.getLogin() ? children : <Navigate to="/login" replace />;
 }
 
+function RedirectIfAuth({ children }: { children: ReactNode }) {
+  return tokenStore.getLogin() ? <Navigate to="/dashboard" replace /> : children;
+}
+
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/"          element={<Navigate to="/login" replace />} />
-        <Route path="/register"  element={<RegisterPage />} />
-        <Route path="/login"     element={<LoginPage />} />
+        <Route path="/register"  element={<RedirectIfAuth><RegisterPage /></RedirectIfAuth>} />
+        <Route path="/login"     element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
         <Route path="/dashboard" element={
           <RequireAuth><DashboardPage /></RequireAuth>
         } />
