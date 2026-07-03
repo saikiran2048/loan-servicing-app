@@ -1,4 +1,4 @@
-import { renderEmailLayout } from './layout';
+import { renderEmailLayout, COLORS } from './layout';
 
 export type PaymentMethod = 'autopay' | 'ach_transfer' | 'debit_card' | 'manual';
 
@@ -63,8 +63,8 @@ export function renderPaymentConfirmationEmail(
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
            style="border:1px solid #e2e4e8; border-radius:6px; overflow:hidden; margin:0 0 16px 0; width:100%; max-width:100%; table-layout:fixed;">
       <tr>
-        <td style="padding:12px 16px; background-color:#f9fafb; border-bottom:1px solid #e2e4e8; font-size:13px; color:#5b6472; width:50%; word-break:break-word;">Amount paid</td>
-        <td style="padding:12px 16px; background-color:#f9fafb; border-bottom:1px solid #e2e4e8; font-size:14px; font-weight:bold; color:#1a1f29; text-align:right; width:50%; word-break:break-word;">${formattedAmount}</td>
+        <td style="padding:12px 16px; background-color:${COLORS.accentBg}; border-bottom:1px solid ${COLORS.accentBorder}; font-size:13px; color:${COLORS.textMuted}; width:50%; word-break:break-word;">Amount paid</td>
+        <td style="padding:12px 16px; background-color:${COLORS.accentBg}; border-bottom:1px solid ${COLORS.accentBorder}; font-size:14px; font-weight:bold; color:${COLORS.accent}; text-align:right; width:50%; word-break:break-word;">${formattedAmount}</td>
       </tr>
       <tr>
         <td style="padding:12px 16px; border-bottom:1px solid #e2e4e8; font-size:13px; color:#5b6472; word-break:break-word;">Payment date</td>

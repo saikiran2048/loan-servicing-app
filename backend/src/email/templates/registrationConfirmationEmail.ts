@@ -1,4 +1,4 @@
-import { renderEmailLayout } from './layout';
+import { renderEmailLayout, COLORS } from './layout';
 
 export function renderRegistrationConfirmationEmail(
   customerName: string,
@@ -15,16 +15,16 @@ export function renderRegistrationConfirmationEmail(
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 16px 0; width:100%; max-width:320px;">
       <tr>
-        <td style="background-color:#f9fafb; border:1px solid #e2e4e8; border-radius:6px; padding:16px;">
-          <p style="margin:0; font-size:13px; color:#5b6472; line-height:20px; word-break:break-word;">Account number</p>
-          <p style="margin:4px 0 0 0; font-size:16px; font-weight:bold; color:#1a1f29; line-height:24px; word-break:break-word;">
+        <td style="background-color:${COLORS.accentBg}; border:1px solid ${COLORS.accentBorder}; border-left:3px solid ${COLORS.accent}; border-radius:6px; padding:16px;">
+          <p style="margin:0; font-size:13px; color:${COLORS.textMuted}; line-height:20px; word-break:break-word;">Account number</p>
+          <p style="margin:4px 0 0 0; font-size:16px; font-weight:bold; color:${COLORS.textPrimary}; line-height:24px; word-break:break-word;">
             &bull;&bull;&bull;&bull;&bull;&bull;${last4}
           </p>
         </td>
       </tr>
     </table>
 
-    <p style="margin:0; font-size:13px; color:#5b6472; line-height:20px; word-break:break-word;">
+    <p style="margin:0; font-size:13px; color:${COLORS.textMuted}; line-height:20px; word-break:break-word;">
       If you didn't register for this account, please contact Customer Support immediately.
     </p>
   `;

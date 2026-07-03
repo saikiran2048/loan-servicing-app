@@ -1,32 +1,73 @@
 // Shared layout wrapping every outbound email. Table-based markup with
 // inline CSS only — no <style> blocks, no flexbox/grid — for maximum
 // compatibility across email clients (Outlook desktop in particular only
-// reliably renders table layouts with inline styles).
+// reliably renders table layouts with inline styles). No CSS gradients in
+// the header for the same reason (Outlook desktop ignores them) — the logo
+// mark uses a solid teal fill instead of the app UI's gradient.
 //
-// All placeholder values (logo, portal URL, support phone/hours/email,
-// disclaimer text) are non-real boilerplate per REQUIREMENTS.md §7.1 —
-// this is a portfolio project, not a real loan servicer.
+// The email BODY stays light (white/near-white) rather than matching the
+// app's dark theme — dark-background emails render inconsistently across
+// clients (Gmail/Outlook dark-mode inversion in particular can produce
+// unreadable results). Brand identity comes through via a dark header band
+// (mirroring the app's nav bar) plus the teal/amber accent palette used
+// throughout the body — same pattern real fintech transactional emails use.
+//
+// All placeholder values (portal URL, support phone/hours/email, disclaimer
+// text) are non-real boilerplate per REQUIREMENTS.md §7.1 — this is a
+// portfolio project, not a real loan servicer.
 
-const BRAND_NAME = 'Loan Servicing Notification Validator';
+const BRAND_NAME = 'Ignition Auto Finance';
 const PORTAL_URL = 'https://example-loan-servicing-portal.demo';
 const SUPPORT_PHONE = '1-800-555-0100';
 const SUPPORT_HOURS = 'Mon\u2013Fri 8am\u20138pm CT';
 const SUPPORT_EMAIL = 'support@loanservicing.demo';
 
-const COLORS = {
+export const COLORS = {
   bg: '#f4f5f7',
   panel: '#ffffff',
   border: '#e2e4e8',
   textPrimary: '#1a1f29',
   textMuted: '#5b6472',
-  accent: '#2155cd',
+  // Accessible (WCAG AA on white) variants of the app's UI accent colors —
+  // the app UI's bright #2ee6b8/#f5a623 don't have enough contrast on a
+  // white background to use for body text or links.
+  accent: '#0f9d78',      // teal — links, "positive"/new-value highlights
+  accentBg: '#e8faf4',    // teal-tinted panel background
+  accentBorder: '#bfeadd',
+  amber: '#b3690a',       // amber — warnings/delinquent highlights
+  amberBg: '#fdf3e3',
+  amberBorder: '#f3ddb0',
   footerBg: '#f9fafb',
+  // Dark header band — matches the app's nav bar background (--bg: #0a0d13).
+  headerBg: '#0a0d13',
+  headerText: '#e9ecf3',
+  logoTeal: '#2ee6b8',
 };
 
 export interface EmailLayoutParams {
   previewText: string; // hidden preheader text, improves inbox preview line
   heading: string;
   bodyHtml: string; // pre-rendered inner HTML for the body slot
+}
+
+function renderHeader(): string {
+  return `
+    <tr>
+      <td style="background-color:${COLORS.headerBg}; padding:20px 24px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+          <tr>
+            <td style="width:28px; height:28px; background-color:${COLORS.logoTeal}; border-radius:7px; text-align:center; vertical-align:middle; font-family:Arial,Helvetica,sans-serif; font-size:14px; font-weight:bold; color:#062018;">
+              I
+            </td>
+            <td style="width:10px; font-size:1px; line-height:1px;">&nbsp;</td>
+            <td style="font-family:Arial,Helvetica,sans-serif; font-size:17px; font-weight:bold; color:${COLORS.headerText}; vertical-align:middle; letter-spacing:-0.01em;">
+              ${BRAND_NAME}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  `;
 }
 
 function renderFooter(): string {
@@ -39,7 +80,7 @@ function renderFooter(): string {
               <p style="margin:0 0 12px 0; font-weight:bold; color:${COLORS.textPrimary};">${BRAND_NAME}</p>
 
               <p style="margin:0 0 12px 0;">
-                <a href="${PORTAL_URL}" style="color:${COLORS.accent}; text-decoration:none;">Visit your Customer Portal</a>
+                <a href="${PORTAL_URL}" style="color:${COLORS.accent}; text-decoration:none; font-weight:bold;">Visit your Customer Portal</a>
               </p>
 
               <p style="margin:0 0 4px 0;">
@@ -84,20 +125,9 @@ export function renderEmailLayout(params: EmailLayoutParams): string {
     <tr>
       <td align="center" style="padding:32px 16px;">
         <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"
-               style="width:100%; max-width:600px; margin:0 auto; background-color:${COLORS.panel}; border:1px solid ${COLORS.border}; border-radius:8px; overflow:hidden; table-layout:fixed;">
+               style="width:100%; max-width:600px; margin:0 auto; background-color:${COLORS.panel}; border:1px solid ${COLORS.border}; border-radius:10px; overflow:hidden; table-layout:fixed;">
 
-          <!-- Header / logo placeholder -->
-          <tr>
-            <td style="padding:24px 24px 20px 24px; border-bottom:1px solid ${COLORS.border};">
-              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
-                <tr>
-                  <td style="font-family:Arial,Helvetica,sans-serif; font-size:18px; font-weight:bold; color:${COLORS.textPrimary}; word-break:break-word;">
-                    ${BRAND_NAME}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+          ${renderHeader()}
 
           <!-- Body -->
           <tr>

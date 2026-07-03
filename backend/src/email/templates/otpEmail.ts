@@ -1,4 +1,4 @@
-import { renderEmailLayout } from './layout';
+import { renderEmailLayout, COLORS } from './layout';
 
 export function renderOtpEmail(otp: string, expiryMinutes: number): { html: string; text: string } {
   const bodyHtml = `
@@ -9,15 +9,15 @@ export function renderOtpEmail(otp: string, expiryMinutes: number): { html: stri
 
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 auto 20px auto; max-width:320px; width:100%;">
       <tr>
-        <td align="center" style="background-color:#f0f3fb; border:1px solid #d6e0f5; border-radius:6px; padding:20px; word-break:break-word;">
-          <span style="display:block; width:100%; font-family:'Courier New',Courier,monospace; font-size:28px; font-weight:bold; letter-spacing:8px; color:#1a1f29; text-align:center;">
+        <td align="center" style="background-color:${COLORS.accentBg}; border:1px solid ${COLORS.accentBorder}; border-radius:8px; padding:20px; word-break:break-word;">
+          <span style="display:block; width:100%; font-family:'Courier New',Courier,monospace; font-size:28px; font-weight:bold; letter-spacing:8px; color:${COLORS.textPrimary}; text-align:center;">
             ${otp}
           </span>
         </td>
       </tr>
     </table>
 
-    <p style="margin:0; font-size:13px; color:#5b6472; line-height:20px;">
+    <p style="margin:0; font-size:13px; color:${COLORS.textMuted}; line-height:20px;">
       If you didn't request this code, you can safely ignore this email.
     </p>
   `;
