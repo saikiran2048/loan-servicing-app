@@ -311,7 +311,10 @@ export default function RegisterPage() {
         {step === 3 && (
           <>
             <div className="verified-box">
-              ✉️ We sent a 6-digit code to <strong>&nbsp;{s2.email}</strong>. It expires in 5 minutes.
+              <span className="verified-icon">✉️</span>
+              <span>
+                We sent a 6-digit code to <strong>{s2.email}</strong>. It expires in 5 minutes.
+              </span>
             </div>
 
             <div className="field">

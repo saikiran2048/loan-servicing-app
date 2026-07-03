@@ -175,7 +175,18 @@ footer.app-footer { border-top: 1px solid var(--border); padding: 26px 40px; tex
 
 .verified-box {
   background: var(--teal-dim); border: 1px solid rgba(46, 230, 184, 0.25); border-radius: 10px;
-  padding: 12px 14px; margin-bottom: 18px; font-size: 13.5px; display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 14px; margin-bottom: 18px; font-size: 13.5px;
+  display: flex; gap: 12px; align-items: flex-start;
+}
+
+.verified-box .verified-icon {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; border-radius: 12px;
+  background: rgba(46, 230, 184, 0.15); flex-shrink: 0;
+}
+
+.verified-box strong {
+  color: var(--text-primary);
 }
 
 /* Legacy StepIndicator component tokens (kept for compatibility) */
