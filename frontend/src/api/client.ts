@@ -60,8 +60,11 @@ export async function apiFetch<T>(
 // Typed API calls
 // ---------------------------------------------------------------------------
 
-// Registration
+export type PaymentMethod = 'ach_transfer' | 'debit_card' | 'manual';
+export type PaymentMethodOrAutopay = PaymentMethod | 'autopay';
+
 export const api = {
+  // Registration
   verifyIdentity: (accountNumber: string, last4Ssn: string) =>
     apiFetch<{ registrationToken: string }>('/api/registration/verify-identity', {
       method: 'POST',
@@ -105,17 +108,28 @@ export const api = {
   getDashboard: (token: string) =>
     apiFetch<DashboardData>('/api/dashboard', { token }),
 
+  toggleAutopay: (token: string, enabled: boolean) =>
+    apiFetch<{ autopayEnabled: boolean }>('/api/dashboard/autopay', {
+      method: 'PATCH',
+      token,
+      body: { enabled },
+    }),
+
   // Payment
   makePayment: (token: string, payload: {
     amount: number;
     bankAccountNumber: string;
     bankLast4: string;
+    method: PaymentMethod;
   }) =>
     apiFetch<PaymentResult>('/api/payment', {
       method: 'POST',
       token,
       body: payload,
     }),
+
+  listPayments: (token: string) =>
+    apiFetch<{ payments: PaymentHistoryEntry[] }>('/api/payments', { token }),
 
   // Due date change
   changeDueDate: (token: string, newDueDate: string) =>
@@ -133,9 +147,11 @@ export interface DashboardData {
   accountSummary: {
     customerName: string;
     accountNumber: string;
-    vehicle: { make: string; model: string; year: number };
+    vehicle: { make: string; model: string; year: number; vin: string | null; color: string | null };
     ownershipType: 'lease' | 'purchase';
     address: string;
+    phone: string | null;
+    memberSince: string | null;
   };
   paymentProgress: {
     installmentsPaid: number;
@@ -148,6 +164,12 @@ export interface DashboardData {
   };
   dueDateChangesUsed: number;
   dueDateChangesRemaining: number;
+  apr: number | null;
+  autopayEnabled: boolean;
+  autopayCharged: boolean;
+  installmentAmount: number;
+  totalAmount: number;
+  remainingBalance: number;
 }
 
 export interface PaymentResult {
@@ -155,6 +177,12 @@ export interface PaymentResult {
   adjustedMessage: string | null;
   balanceRemaining: number;
   installmentsPaid: number;
+}
+
+export interface PaymentHistoryEntry {
+  date: string;
+  method: PaymentMethodOrAutopay;
+  amount: number;
 }
 
 export interface DueDateChangeResult {

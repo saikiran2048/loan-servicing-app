@@ -99,6 +99,20 @@ router.get('/', requireLogin, async (req: Request, res: Response) => {
     config
   );
 
+  // Remaining balance is derived from the payments ledger (SUM), same
+  // "ledger is authoritative, not installments_paid * installment_amount"
+  // principle used in payment.ts / autopayService.ts. Read after COMMIT —
+  // no lock needed for a display-only figure.
+  const paidResult = await pool.query(
+    `SELECT COALESCE(SUM(amount), 0) AS total_paid FROM payments WHERE account_id = $1`,
+    [accountId]
+  );
+  const totalPaid = Number(paidResult.rows[0].total_paid);
+  const remainingBalance = Math.max(
+    0,
+    Math.round((Number(account.total_amount) - totalPaid) * 100) / 100
+  );
+
   return res.status(200).json({
     accountSummary: {
       customerName: account.customer_name,
@@ -131,6 +145,9 @@ router.get('/', requireLogin, async (req: Request, res: Response) => {
     ),
     apr: account.apr !== null ? Number(account.apr) : null,
     autopayEnabled: account.autopay_enabled,
+    installmentAmount: Number(account.installment_amount),
+    totalAmount: Number(account.total_amount),
+    remainingBalance,
     // Exposed mainly so tests can assert directly on "did autopay fire this
     // call" without inferring it from a due-date diff.
     autopayCharged: autopayResult.charged,

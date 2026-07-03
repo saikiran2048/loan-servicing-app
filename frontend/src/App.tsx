@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { type ReactNode } from 'react';
+import HomePage      from './pages/Home';
 import RegisterPage  from './pages/Register';
 import LoginPage     from './pages/Login';
 import DashboardPage from './pages/Dashboard';
+import Nav from './components/Nav';
+import { ToastProvider } from './components/Toast';
 import { tokenStore } from './api/client';
 
 function RequireAuth({ children }: { children: ReactNode }) {
@@ -15,16 +18,19 @@ function RedirectIfAuth({ children }: { children: ReactNode }) {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/"          element={<Navigate to="/login" replace />} />
-        <Route path="/register"  element={<RedirectIfAuth><RegisterPage /></RedirectIfAuth>} />
-        <Route path="/login"     element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
-        <Route path="/dashboard" element={
-          <RequireAuth><DashboardPage /></RequireAuth>
-        } />
-        <Route path="*"          element={<Navigate to="/login" replace />} />
-      </Routes>
-    </BrowserRouter>
+    <ToastProvider>
+      <BrowserRouter>
+        <Nav />
+        <Routes>
+          <Route path="/"          element={<HomePage />} />
+          <Route path="/register"  element={<RedirectIfAuth><RegisterPage /></RedirectIfAuth>} />
+          <Route path="/login"     element={<RedirectIfAuth><LoginPage /></RedirectIfAuth>} />
+          <Route path="/dashboard" element={
+            <RequireAuth><DashboardPage /></RequireAuth>
+          } />
+          <Route path="*"          element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </ToastProvider>
   );
 }

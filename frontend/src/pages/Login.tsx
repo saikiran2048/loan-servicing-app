@@ -3,9 +3,12 @@ import { useNavigate, Link } from 'react-router-dom';
 import { api, tokenStore } from '../api/client';
 import type { ApiError } from '../api/client';
 import Spinner from '../components/Spinner';
+import { useToast } from '../components/Toast';
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
+
   const [email,    setEmail]    = useState('');
   const [password, setPassword] = useState('');
   const [showPw,   setShowPw]   = useState(false);
@@ -18,6 +21,7 @@ export default function LoginPage() {
     try {
       const { loginToken } = await api.login(email, password);
       tokenStore.setLogin(loginToken);
+      showToast('success', 'Welcome back', 'Signed in successfully.');
       navigate('/dashboard');
     } catch (err) {
       setErrorMsg((err as ApiError).error ?? 'Something went wrong.');
@@ -27,14 +31,12 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="page-center">
-      <div className="card">
-        <div className="portal-brand">Loan Servicing Portal</div>
+    <div className="auth-wrap">
+      <div className="auth-card">
+        <h2>Sign in</h2>
+        <span className="auth-sub">Access your account dashboard.</span>
 
-        <p className="page-title">Sign in</p>
-        <p className="page-subtitle">Access your account dashboard.</p>
-
-        {errorMsg && <div className="alert alert-error">{errorMsg}</div>}
+        {errorMsg && <div className="field-error">{errorMsg}</div>}
 
         <div className="field">
           <label htmlFor="email">Email address</label>
@@ -43,8 +45,8 @@ export default function LoginPage() {
             type="email"
             placeholder="you@example.com"
             value={email}
-            onChange={e => setEmail(e.target.value)}
-            onKeyDown={e => e.key === 'Enter' && email && password && handleLogin()}
+            onChange={(e) => setEmail(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && email && password && handleLogin()}
             autoFocus
           />
         </div>
@@ -57,13 +59,13 @@ export default function LoginPage() {
               type={showPw ? 'text' : 'password'}
               placeholder="Your password"
               value={password}
-              onChange={e => setPassword(e.target.value)}
-              onKeyDown={e => e.key === 'Enter' && email && password && handleLogin()}
-              style={{ paddingRight: 44 }}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && email && password && handleLogin()}
+              style={{ paddingRight: 52 }}
             />
             <button
               type="button"
-              onClick={() => setShowPw(p => !p)}
+              onClick={() => setShowPw((p) => !p)}
               style={{ position: 'absolute', right: 10, top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: 12, padding: 4 }}
               tabIndex={-1}
             >
@@ -75,21 +77,22 @@ export default function LoginPage() {
         {/* Forgot Password is out of scope per REQUIREMENTS.md §3 */}
         <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 20 }}>
           Forgot your password? Contact{' '}
-          <a href="mailto:support@loanservicing.demo">support@loanservicing.demo</a>
+          <a href="mailto:support@loanservicing.demo" style={{ color: 'var(--teal)' }}>
+            support@loanservicing.demo
+          </a>
         </p>
 
         <button
-          className="btn btn-primary"
+          className="btn btn-primary btn-full"
           onClick={handleLogin}
           disabled={!email || !password || loading}
         >
           {loading ? <Spinner /> : 'Sign in'}
         </button>
 
-        <p style={{ textAlign: 'center', marginTop: 20, fontSize: 13, color: 'var(--text-muted)' }}>
-          New customer?{' '}
-          <Link to="/register">Register your account</Link>
-        </p>
+        <div className="switch-line">
+          New customer? <Link to="/register">Register your account</Link>
+        </div>
       </div>
     </div>
   );
