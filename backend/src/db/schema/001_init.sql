@@ -107,6 +107,7 @@ CREATE TABLE payments (
     id                       SERIAL PRIMARY KEY,
     account_id                 INTEGER NOT NULL REFERENCES accounts (id) ON DELETE CASCADE,
     amount                     NUMERIC(12, 2) NOT NULL CHECK (amount > 0),
+    method                     VARCHAR(20) NOT NULL,
     bank_account_number          VARCHAR(50) NOT NULL,
     bank_last_4                 VARCHAR(4) NOT NULL,
     paid_at                     TIMESTAMPTZ NOT NULL DEFAULT now()

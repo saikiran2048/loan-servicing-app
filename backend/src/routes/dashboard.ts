@@ -35,7 +35,7 @@ router.get('/', requireLogin, async (req: Request, res: Response) => {
        FROM accounts a
        LEFT JOIN customers c ON c.account_id = a.id
        WHERE a.id = $1
-       FOR UPDATE`,
+       FOR UPDATE OF a`,
       [accountId]
     );
 

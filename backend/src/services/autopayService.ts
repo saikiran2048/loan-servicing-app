@@ -76,7 +76,8 @@ export async function maybeProcessAutopayCharge(
   const appliedAmount = Math.min(amountDue, Math.round(remainingBalance * 100) / 100);
 
   await client.query(
-    `INSERT INTO payments (account_id, amount, method) VALUES ($1, $2, 'autopay')`,
+    `INSERT INTO payments (account_id, amount, method, bank_account_number, bank_last_4)
+     VALUES ($1, $2, 'autopay', 'AUTOPAY', '0000')`,
     [account.id, appliedAmount]
   );
 

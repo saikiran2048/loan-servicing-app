@@ -12,10 +12,11 @@
 -- history. bank_account_number/bank_last_4 are placeholder values clearly
 -- marked as backfill, not real submitted payment data.
 
-INSERT INTO payments (account_id, amount, bank_account_number, bank_last_4, paid_at)
+INSERT INTO payments (account_id, amount, method, bank_account_number, bank_last_4, paid_at)
 SELECT
     id,
     ROUND(installment_amount * installments_paid, 2),
+    'seed',
     '0000000000SEEDBACKFILL',
     '0000',
     created_at
